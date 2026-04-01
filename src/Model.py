@@ -1,6 +1,7 @@
 from repast4py import context, schedule, space
 import numpy as np
 from src.Cell import Cell
+from src.Visualizer import Visualizer
 
 class Model:
     def __init__(self, comm, params):
@@ -22,6 +23,9 @@ class Model:
         self.initialize_agents(params)
         self.runner = schedule.init_schedule_runner(comm)
         self.runner.schedule_repeating_event(1, 1, self.step)
+        self.visualizer = Visualizer(comm, params, cell_size=6)
+        self.runner.schedule_repeating_event(1.1, 1, self.update_viz)
+        self.runner.schedule_stop(params['stop_at'])
 
 
     def initialize_agents(self, params):
@@ -33,7 +37,7 @@ class Model:
             for j in range(local_bounds.ymin, local_bounds.ymin + local_bounds.yextent):
                 point = space.DiscretePoint(i, j)
                 c = Cell(local_id, rank, point)
-                c.state = 1 if np.random.random() < 0.1 else 0 # random initialization of live cells
+                c.state = 1 if np.random.random() < params['density'] else 0 # random initialization of live cells
                 self.context.add(c)
                 self.grid.move(c, point)
 
@@ -57,6 +61,9 @@ class Model:
             cell = Cell(uid[0], uid[2], pt)
         cell.state = state
         return cell
+
+    def update_viz(self):
+        self.visualizer.draw(self.context)
 
     def run(self):
         self.runner.execute()
