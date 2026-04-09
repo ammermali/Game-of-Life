@@ -9,16 +9,20 @@ class Cell(core.Agent):
         self.point = point
         self.future_state = 0 # stores the state to apply after the step
 
-    def get_next_state(self, grid):
+    def get_optimal_state(self, grid): # see
         neighbors = self.get_neighbors(grid)
         live_neighbors = sum(n.state for n in neighbors)
         # TODO check again the rules
         if self.state == 1:
-            self.future_state = 1 if 2 <= live_neighbors <= 3 else 0
+            optimal_state = 1 if 2 <= live_neighbors <= 3 else 0
         else:
-            self.future_state = 1 if live_neighbors == 3 else 0
+            optimal_state = 1 if live_neighbors == 3 else 0
+        return optimal_state
 
-    def apply_state(self):
+    def set_next_state(self, grid): # action
+        self.future_state = self.get_optimal_state(grid)
+
+    def apply_state(self): # do
         self.state = self.future_state
 
     def save(self) -> Tuple:

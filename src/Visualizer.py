@@ -27,7 +27,7 @@ class Visualizer:
             for rank_cells in all_live_cells:
                 for x, y in rank_cells:
                     rect = (x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size)
-                    pygame.draw.rect(self.screen, (0, 0, 0), rect) # Celle nere
+                    pygame.draw.rect(self.screen, (0, 0, 240), rect) # Celle nere
 
             pygame.display.flip()
             self.clock.tick(15)
